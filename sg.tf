@@ -5,60 +5,60 @@ data "http" "firewall_allowed" {
 
 locals {
   #src_ip = "${chomp(data.http.firewall_allowed.response_body)}/32"
-  src_ip = "0.0.0.0/0" 
+  src_ip = "0.0.0.0/0"
 }
 
 resource "aws_security_group" "operator" {
   name        = "operator_bas_security_group"
   description = "Allow traffic to BAS"
-  vpc_id      = aws_vpc.operator.id 
+  vpc_id      = aws_vpc.operator.id
   ingress {
-    from_port   = -1 
-    to_port     = -1 
+    from_port   = -1
+    to_port     = -1
     protocol    = "icmp"
     cidr_blocks = [local.src_ip, var.vpc_cidr]
   }
   ingress {
-    from_port   = 9092 
-    to_port     = 9092 
+    from_port   = 9092
+    to_port     = 9092
     protocol    = "tcp"
     cidr_blocks = [local.src_ip, var.vpc_cidr]
   }
   ingress {
-    from_port   = 22 
-    to_port     = 22 
+    from_port   = 22
+    to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = [local.src_ip, var.vpc_cidr] 
+    cidr_blocks = [local.src_ip, var.vpc_cidr]
   }
   ingress {
-    from_port   = 443 
-    to_port     = 443 
+    from_port   = 443
+    to_port     = 443
     protocol    = "tcp"
-    cidr_blocks = [local.src_ip, var.vpc_cidr] 
+    cidr_blocks = [local.src_ip, var.vpc_cidr]
   }
   ingress {
-    from_port   = 8080 
-    to_port     = 8080 
+    from_port   = 8080
+    to_port     = 8080
     protocol    = "tcp"
-    cidr_blocks = [local.src_ip, var.vpc_cidr] 
+    cidr_blocks = [local.src_ip, var.vpc_cidr]
   }
   ingress {
-    from_port   = 8088 
-    to_port     = 8088 
+    from_port   = 8088
+    to_port     = 8088
     protocol    = "tcp"
-    cidr_blocks = [local.src_ip, var.vpc_cidr] 
+    cidr_blocks = [local.src_ip, var.vpc_cidr]
   }
   ingress {
-    from_port   = 2181 
-    to_port     = 2181 
+    from_port   = 2181
+    to_port     = 2181
     protocol    = "tcp"
-    cidr_blocks = [local.src_ip, var.vpc_cidr] 
+    cidr_blocks = [local.src_ip, var.vpc_cidr]
   }
   ingress {
-    from_port   = 8888 
-    to_port     = 8888 
+    from_port   = 8888
+    to_port     = 8888
     protocol    = "tcp"
-    cidr_blocks = [local.src_ip, var.vpc_cidr] 
+    cidr_blocks = [local.src_ip, var.vpc_cidr]
   }
   ingress {
     from_port   = 8443
@@ -67,10 +67,10 @@ resource "aws_security_group" "operator" {
     cidr_blocks = [local.src_ip, var.vpc_cidr]
   }
   ingress {
-    from_port   = 8000 
-    to_port     = 8000 
+    from_port   = 8000
+    to_port     = 8000
     protocol    = "tcp"
-    cidr_blocks = [local.src_ip, var.vpc_cidr] 
+    cidr_blocks = [local.src_ip, var.vpc_cidr]
   }
   egress {
     from_port   = 0
@@ -86,22 +86,22 @@ resource "aws_security_group" "operator" {
 resource "aws_security_group" "operator_windows" {
   name        = "operator_windows_security_group"
   description = "Allow traffic to Windows"
-  vpc_id      = aws_vpc.operator.id 
+  vpc_id      = aws_vpc.operator.id
   ingress {
-    from_port   = 3389 
-    to_port     = 3389 
+    from_port   = 3389
+    to_port     = 3389
     protocol    = "tcp"
     cidr_blocks = [local.src_ip]
   }
   ingress {
-    from_port   = 5985 
-    to_port     = 5985 
+    from_port   = 5985
+    to_port     = 5985
     protocol    = "tcp"
     cidr_blocks = [local.src_ip]
   }
   ingress {
-    from_port   = 5986 
-    to_port     = 5986 
+    from_port   = 5986
+    to_port     = 5986
     protocol    = "tcp"
     cidr_blocks = [local.src_ip]
   }

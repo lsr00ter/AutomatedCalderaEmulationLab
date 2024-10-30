@@ -4,8 +4,8 @@ variable "vpc_cidr" {
 
 # Create vpc
 resource "aws_vpc" "operator" {
-  cidr_block           = var.vpc_cidr 
-  enable_dns_hostnames = true 
+  cidr_block           = var.vpc_cidr
+  enable_dns_hostnames = true
   enable_dns_support   = true
   instance_tenancy     = "default"
 
@@ -38,7 +38,7 @@ resource "aws_route_table" "operator-rt" {
     gateway_id = aws_internet_gateway.operator-igw.id
   }
 
-  tags = { 
+  tags = {
     Name = "OperatorLab_Routing_Table"
   }
 }
@@ -58,15 +58,15 @@ variable "ad_subnet_name" {
 variable "ad_subnet_prefix" {
   default = "10.100.10.0/24"
 }
-    
+
 # Create the ad_subnet subnet
 resource "aws_subnet" "ad_subnet" {
-  
-  vpc_id  = aws_vpc.operator.id
+
+  vpc_id                  = aws_vpc.operator.id
   cidr_block              = var.ad_subnet_prefix
   availability_zone       = data.aws_availability_zones.available.names[1]
   map_public_ip_on_launch = true
-  
+
   tags = {
     Name = var.ad_subnet_name
   }
@@ -88,15 +88,15 @@ variable "user_subnet_name" {
 variable "user_subnet_prefix" {
   default = "10.100.20.0/24"
 }
-    
+
 # Create the user_subnet subnet
 resource "aws_subnet" "user_subnet" {
-  
-  vpc_id  = aws_vpc.operator.id
+
+  vpc_id                  = aws_vpc.operator.id
   cidr_block              = var.user_subnet_prefix
   availability_zone       = data.aws_availability_zones.available.names[1]
   map_public_ip_on_launch = true
-  
+
   tags = {
     Name = var.user_subnet_name
   }
@@ -118,15 +118,15 @@ variable "siem_subnet_name" {
 variable "siem_subnet_prefix" {
   default = "10.100.30.0/24"
 }
-    
+
 # Create the siem_subnet subnet
 resource "aws_subnet" "siem_subnet" {
-  
-  vpc_id  = aws_vpc.operator.id
+
+  vpc_id                  = aws_vpc.operator.id
   cidr_block              = var.siem_subnet_prefix
   availability_zone       = data.aws_availability_zones.available.names[1]
   map_public_ip_on_launch = true
-  
+
   tags = {
     Name = var.siem_subnet_name
   }
@@ -148,15 +148,15 @@ variable "attack_subnet_name" {
 variable "attack_subnet_prefix" {
   default = "10.100.40.0/24"
 }
-    
+
 # Create the attack_subnet subnet
 resource "aws_subnet" "attack_subnet" {
-  
-  vpc_id  = aws_vpc.operator.id
+
+  vpc_id                  = aws_vpc.operator.id
   cidr_block              = var.attack_subnet_prefix
   availability_zone       = data.aws_availability_zones.available.names[1]
   map_public_ip_on_launch = true
-  
+
   tags = {
     Name = var.attack_subnet_name
   }

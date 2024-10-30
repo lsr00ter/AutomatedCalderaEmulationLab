@@ -1,4 +1,4 @@
-# Automated Emulation with Caldera 5.0 Support!
+# Automated Emulation with Caldera 5.0 Support
 
 ## Overview
 
@@ -14,7 +14,7 @@ See the **Features and Capabilities** section for more details.
 
 ## Key Differences
 
-This lab differs from other popular ```Cyber Ranges``` in its design and philosophy.  No secondary tools like Ansible are necessary.  Feel free to use them if you like.  But they aren't required for configuration management.  Instead of using 3rd party configuration management tools, this lab uses terraform providers (AWS SDK) and builtin AWS features (```user data```).  You don't have to rely on a secondary agent or deal with outdated libraries or networking issues with agentless push or updating a secondary tool that causes issues over time.  This increases ```stability, consistency, and speed``` for building and configuring cloud resources.  Use terraform, bash, and powershell to build and configure.  A small user-data script is pushed into the system and runs.  Individual configuration management scripts are uploaded to an S3 bucket.  The master script instructs the system which smaller scripts to run which builds the system.  With good documentation, the location of these scripts should make it easy to add and customize.  See the **Features and Capabilities** section for more details.     
+This lab differs from other popular ```Cyber Ranges``` in its design and philosophy.  No secondary tools like Ansible are necessary.  Feel free to use them if you like.  But they aren't required for configuration management.  Instead of using 3rd party configuration management tools, this lab uses terraform providers (AWS SDK) and builtin AWS features (```user data```).  You don't have to rely on a secondary agent or deal with outdated libraries or networking issues with agentless push or updating a secondary tool that causes issues over time.  This increases ```stability, consistency, and speed``` for building and configuring cloud resources.  Use terraform, bash, and powershell to build and configure.  A small user-data script is pushed into the system and runs.  Individual configuration management scripts are uploaded to an S3 bucket.  The master script instructs the system which smaller scripts to run which builds the system.  With good documentation, the location of these scripts should make it easy to add and customize.  See the **Features and Capabilities** section for more details.
 
 ## Requirements and Setup
 
@@ -24,7 +24,8 @@ This lab differs from other popular ```Cyber Ranges``` in its design and philoso
 * terraform 1.5.7
 
 **Clone this repository:**
-```
+
+```bash
 git clone https://github.com/iknowjason/AutomatedEmulation
 ```
 
@@ -32,7 +33,7 @@ git clone https://github.com/iknowjason/AutomatedEmulation
 
 Generate an IAM programmatic access key that has permissions to build resources in your AWS account.  Setup your .env to load these environment variables.  You can also use the direnv tool to hook into your shell and populate the .envrc.  Should look something like this in your .env or .envrc:
 
-```
+```bash
 export AWS_ACCESS_KEY_ID="VALUE"
 export AWS_SECRET_ACCESS_KEY="VALUE"
 ```
@@ -40,38 +41,47 @@ export AWS_SECRET_ACCESS_KEY="VALUE"
 ## Build and Destroy Resources
 
 ### Run terraform init
+
 Change into the AutomatedEmulation working directory and type:
 
-```
+```bash
 terraform init
 ```
 
 ### Run terraform plan or apply
-```
+
+```bash
 terraform apply -auto-approve
 ```
+
 or
-```
+
+```bash
 terraform plan -out=run.plan
 terraform apply run.plan
 ```
 
 ### Destroy resources
-```
+
+```bash
 terraform destroy -auto-approve
 ```
 
 ### View terraform created resources
+
 The lab has been created with important terraform outputs showing services, endpoints, IP addresses, and credentials.  To view them:
-```
+
+```bash
 terraform output
 ```
 
 ## Features and Capabilities
 
 ### Important Firewall and White Listing
+
 By default when you run terraform apply, your public IPv4 address is determined via a query to ifconfig.so and the ```terraform.tfstate``` is updated automatically.  If your location changes, simply run ```terraform apply``` to update the security groups with your new public IPv4 address.  If ifconfig.me returns a public IPv6 address,  your terraform will break.  In that case you'll have to customize the white list.  To change the white list for custom rules, update this variable in ```sg.tf```:
-```
+
+```conf
 locals {
   src_ip = "${chomp(data.http.firewall_allowed.response_body)}/32"
   #src_ip = "0.0.0.0/0"
@@ -84,21 +94,24 @@ locals {
 
 Caldera is built on an Ubuntu Linux 22.04 AMI automatically with SSL support for admin console.  The following local project files are important for customization:
 
-* bas.tf:  The terraform file that builds the Linux server and all terraform variables for Caldera.
-* files/bas/bootstrap.sh.tpl:  The boostrap script for Caldera and other services.
-* files/bas/local.yml.tpl:  The Caldera configuration file that is automatically deployed
-* files/bas/caldera.service:  The caldera service file that is automatically installed
-* files/bas/abilities/:  A local directory with custom abilities that will automatically deploy to the caldera server in ```/opt/caldera/data/abilities```
-* files/bas/payloads/:  A local directory with custom payloads that will automatically deploy to the caldera server in ```/opt/caldera/data/payloads```
+* `bas.tf`:  The terraform file that builds the Linux server and all terraform variables for Caldera.
+* `files/bas/bootstrap.sh.tpl`:  The boostrap script for Caldera and other services.
+* `files/bas/local.yml.tpl`:  The Caldera configuration file that is automatically deployed
+* `files/bas/caldera.service`:  The caldera service file that is automatically installed
+* `files/bas/abilities/`:  A local directory with custom abilities that will automatically deploy to the caldera server in ```/opt/caldera/data/abilities```
+* `files/bas/payloads/`:  A local directory with custom payloads that will automatically deploy to the caldera server in ```/opt/caldera/data/payloads```
 
 **Troubleshooting Caldera:**
 
-SSH into the Caldera server by looking in ```terraform output``` for this line:  
-```
+SSH into the Caldera server by looking in ```terraform output``` for this line:
+
+```bash
 ssh -i ssh_key.pem ubuntu@3.15.204.148
 ```
+
 Once in the system, tail the user-data logfile.  You will see the steps from the ```bootstrap.sh.tpl``` script running:
-```
+
+```bash
 tail -f /var/log/user-data.log
 ```
 
@@ -113,7 +126,8 @@ You can create custom abilities in your project that get automatically loaded in
 **Teraform Output:**
 
 View the terraform outputs for important Caldera access information:
-```
+
+```bash
 -------
 Caldera Console
 -------
@@ -135,15 +149,16 @@ Caldera API Cheat Sheet
 <CUSTOM>
 --------------
 ```
+
 **Caldera on Windows Client:**
 
 The Caldera sandcat agent is automatically installed and launches on the Windows client system.  The bootstrap script waits until Caldera is up and available, then installs Sandcat caldera agent.  It should look like this.
 
 ![Caldera](images/caldera1.png "Agent View")
 
+To troubleshoot this, look in the following logfile on the Windows system:
 
-To troubleshoot this, look in the following logfile on the Windows system:  
-```
+```bash
 C:\Terraform\caldera_log.log
 ```
 
@@ -158,7 +173,8 @@ _VECTR is a tool that facilitates tracking of your red and blue team testing act
 ![VECTR](images/vectr.png "VECTR")
 
 Take a look at the terraform output to see the public URL and credentials for accessing VECTR:
-```
+
+```bash
 VECTR Console
 -------------
 https://ec2-3-15-204-148.us-east-2.compute.amazonaws.com:8081
@@ -191,7 +207,7 @@ To track monitoring of the deployment on the Windows Client, see the logfile at 
 
 The Windows Client system is built from ```win1.tf```.  Windows Server 2022 Datacenter edition is currently used.  You can upload your own AMI image and change the data reference in win1.tf.  The local bootstrap script is located in ```files/windows/bootstrap-win.ps1.tpl```.  RDP into the Windows system and follow this logfile to see how the system is bootstrapping:
 
-```
+```bash
 C:\Terraform\bootstrap_log.log
 ```
 
@@ -202,7 +218,8 @@ For adding new scripts for a customized deployment, reference the arrays in ```s
 **Terraform Outputs**
 
 See the output from ```terraform output``` to get the IP address and credentials for RDP:
-```
+
+```bash
 -------------------------
 Virtual Machine win1
 -------------------------
@@ -220,7 +237,7 @@ The linux system is built from ```bas.tf```.  The bootstrap script is located in
 
 To access the Linux system and troubleshoot any bootstrap issues, SSH into the system by looking at the terraform output:
 
-```
+```bash
 SSH
 ---
 ssh -i ssh_key.pem ubuntu@3.15.204.148
@@ -228,7 +245,7 @@ ssh -i ssh_key.pem ubuntu@3.15.204.148
 
 Then tail the user-data logfile to monitor any potential issues with the bootstrap script:
 
-```
+```bash
 tail -f /var/log/user-data.log
 ```
 
@@ -236,8 +253,6 @@ tail -f /var/log/user-data.log
 
 This terraform was automatically generated by the Operator Lab tool.  To get future releases of the tool, follow twitter.com/securitypuck.
 
-For an Azure version of this tool, check out PurpleCloud (https://www.purplecloud.network)
+For an Azure version of this tool, check out PurpleCloud (<https://www.purplecloud.network>)
 
 <a href="https://twitter.com/intent/user?screen_name=securitypuck">![X (formerly Twitter) Follow](https://img.shields.io/twitter/follow/securitypuck)</a>
-
-

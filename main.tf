@@ -1,20 +1,20 @@
 variable "region" {
-  default = "us-east-2"
+  default = "ap-southeast-1"
 }
 
 # Random string for resources
 resource "random_string" "suffix" {
   length  = 5
   special = false
-  upper   = false 
+  upper   = false
 }
 
 locals {
-  rs = "${random_string.suffix.id}"
+  rs = random_string.suffix.id
 }
 
 output "aws_region" {
-  value   = var.region
+  value = var.region
 }
 
 resource "tls_private_key" "operator" {
@@ -30,7 +30,7 @@ module "key_pair" {
 
 # write ssh key to file
 resource "local_file" "ssh_key" {
-    content  = tls_private_key.operator.private_key_pem
-    filename = "${path.module}/ssh_key.pem"
-    file_permission = "0700"
+  content         = tls_private_key.operator.private_key_pem
+  filename        = "${path.module}/ssh_key.pem"
+  file_permission = "0700"
 }
